@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Untitled Document</title>
+</head>
+
+<body>
+
+<canvas width="1000" height="400" id="canvas"></canvas> 
+<script> 
+
+
+var data = [ 18.8496, 43.9823, 25.1327, 31.4159,3.1416, 12.5664 ]; 
+var labels =["Mozzarella","Cheddar","Gouda","Danish Blue","Stilton","Monterey Jack"];
+var canvas = document.getElementById('canvas'); 
+var context = canvas.getContext('2d'); 
+  var cx = canvas.width/2;
+  var cy = canvas.height/2;
+var radius = 100;
+
+ 
+var colors = ["rgb(18,82,178)","rgb(255,53,25)","rgb(0,102,255)","rgb(160,204,20)","rgb(255,85,15)","rgb(255,238,0)"];
+var total = 0; 
+for(var i=0; i<data.length; i++) { 
+    total += data[i]; 
+} 
+
+var dataMax = Math.max.apply(Math,data);
+var labelsMax = Math.max.apply(Math,labels);
+var colorsMax = Math.max.apply(Math,colors);
+var dataMin = Math.min.apply(Math,data);
+var labelsMin = Math.min.apply(Math,labels);
+var colorsMin = Math.min.apply(Math,colors);
+//draw pie data 
+var prevAngle = 0; 
+for(var i=0; i<data.length; i++) { 
+
+	var length;
+	
+	if(data[i] == dataMax){
+		length = 90;
+	}else if(data[i] == dataMin){
+		length = 110;
+	}else{
+		length = 100;
+	}
+	
+	
+    //fraction that this pieslice represents 
+    var fraction = data[i]/total; 
+    //calc starting angle 
+    var angle = prevAngle + fraction*Math.PI*2; 
+     
+    //draw the pie slice 
+    context.fillStyle = colors[i]; 
+     
+    //create a path ß
+    context.beginPath(); 
+    context.moveTo(cx,cy); 
+    context.arc(cx,cy, length, prevAngle, angle, false); 
+    context.lineTo(cx,cy); 
+     
+    //fill it 
+    context.fill(); 
+     
+    //stroke it 
+    context.strokeStyle = "black"; 
+    context.stroke(); 
+     
+    //update for next time through the loop 
+    //prevAngle = angle; 
+	
+	context.save();
+    context.translate(cx, cy);//make the middle of the circle the (0,0) point
+    context.lineWidth = 3;
+    context.beginPath();
+    //angle to be used for the lines
+    var midAngle = (prevAngle + angle)/2;
+	//middle of two angles
+    context.moveTo(0,0);//this value is to start at the middle of the circle
+    //to start further out...
+    var dx = Math.cos(midAngle) * (0.8 * radius);
+    var dy = Math.sin(midAngle) * (0.8 * radius);
+    context.moveTo(dx, dy);
+    //ending points for the lines
+    var dx = Math.cos(midAngle) * (radius + 20); 
+    var dy = Math.sin(midAngle) * (radius + 20);
+    context.lineTo(dx, dy);
+	context.font = '10pt Calibri';
+
+	context.fillStyle = 'black';
+
+	context.fillText(labels[i],dx,dy);
+
+    context.stroke();
+    //put the canvas back to the original position
+    context.restore();
+    //update the currentAngle
+    prevAngle = angle; 
+	
+	
+} 
+context.font = '15pt Lobster';
+context.fillStyle = 'black';
+
+var xpos = 100;
+  var ypos = 40;
+  context.fillText( "data", xpos, ypos);
+   for(var i=0; i<data.length; i++){
+    ypos += 40;
+    context.fillText( data[i].toString(), xpos, ypos);
+  }
+  //2. write out the total
+  ypos += 40;
+  context.fillText( total + " - total", xpos, ypos);
+  
+  //3. write out percentage of the total for each number
+  ypos = 40;
+  xpos += 100;
+  context.fillText( "Percentage of total", xpos, ypos);
+  for(var i=0; i<data.length; i++){
+    ypos += 40;
+    var pct = (parseInt(data[i] / total * 10000))/100;
+    context.fillText( pct.toString(), xpos, ypos);
+	
+	//context.fillText(labels[i],xpos,ypos);
+  }
+  
+  
+  
+
+
+
+</script> 
+
+
+</body>
+</html>
